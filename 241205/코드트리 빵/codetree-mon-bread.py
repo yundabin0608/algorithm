@@ -41,7 +41,7 @@ while arrive < m:
         min_dist, result = float('inf'), []
         for i in range(4):
             nowX, nowY = people[idx][0][0] + dx[i], people[idx][0][1] + dy[i]
-            if 0<=nowX<n and 0<=nowY<n:
+            if 0<=nowX<n and 0<=nowY<n and board[nowY][nowX]==0:
                 dist = bfs(nowX, nowY, people[idx][1][0], people[idx][1][1])
                 if dist < min_dist:
                     min_dist = dist
@@ -74,5 +74,4 @@ while arrive < m:
 
 print(time)
 
-# 메모리초과..
-# sort 때문인거 같아서 없애봄..
+# 메모리초과.. -> sort 때문인거 같아서 없애고 최솟값 갱신하도록 수정..
