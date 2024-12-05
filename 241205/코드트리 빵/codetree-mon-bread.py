@@ -18,34 +18,36 @@ for idx in range(m):
 
 def bfs(startX, startY, endX, endY):
     visited = [[0]*n for _ in range(n)]
-    q = deque([[startX, startY, 1]])
+    q = deque([[startX, startY, 0]])
     visited[startY][startX] = 1
 
     while q:
         x, y, dist = q.popleft()
-
-        if [x, y] == [endX, endY]: return dist
+        if [x, y] == [endX, endY]:
+            return dist
         for i in range(4):
             nx, ny = x + dx[i], y + dy[i]
             if 0<=nx<n and 0<=ny<n and board[ny][nx] == 0 and visited[ny][nx] == 0:
-                visited[ny][nx] == 1
+                visited[ny][nx] = 1
                 q.append([nx, ny, dist + 1])
     return float('inf')
-
 
 while arrive < m:
     time += 1
     # 1번 -> 최단거리로 1칸만 움직이기 = 이동 순간마다 최단 거리 구해야할 듯
     for idx in people.keys():
-        if people[idx][0] == [] or people[idx][2]: continue
-        # 4방향으로 이동했을 경우 이때마다의 최단 거리 구하기
-        result = []
+        if people[idx][0] == [] or people[idx][2]: 
+            continue
+        min_dist, result = float('inf'), []
         for i in range(4):
             nowX, nowY = people[idx][0][0] + dx[i], people[idx][0][1] + dy[i]
             if 0<=nowX<n and 0<=nowY<n:
-                result.append([bfs(nowX, nowY, people[idx][1][0], people[idx][1][1]), i, [nowX, nowY]])
-        result.sort()
-        people[idx][0] = result[0][2]
+                dist = bfs(nowX, nowY, people[idx][1][0], people[idx][1][1])
+                if dist < min_dist:
+                    min_dist = dist
+                    result = [nowX, nowY]
+        
+        people[idx][0] = result
 
         if people[idx][0] == people[idx][1]:
             people[idx][2] = True
@@ -59,13 +61,18 @@ while arrive < m:
     # 3번 -> 베이스캠프 배정
     if time <= m:
         dist = people[time][1]
-        result = []
+        min_dist, result = float('inf'), []
         for idx, bc in enumerate(baseCamp):
-            result.append([bfs(bc[0], bc[1], dist[0], dist[1]) ,idx,bc])
-        # 최단거리로 편의점들의 최단거리 > 우선 bc 순 정렬 후 택
-        result.sort()
-        people[time][0] = result[0][2]
-        baseCamp.remove(result[0][2])
-        board[result[0][2][1]][result[0][2][0]] = 1
+            dist_to_camp = bfs(bc[0], bc[1], dist[0], dist[1])
+            if dist_to_camp < min_dist:
+                min_dist = dist_to_camp
+                result = bc
+        
+        people[time][0] = result
+        baseCamp.remove(result)
+        board[result[1]][result[0]] = 1
 
 print(time)
+
+# 메모리초과..
+# sort 때문인거 같아서 없애봄..
