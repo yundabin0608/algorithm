@@ -14,10 +14,13 @@ for y in range(n):
 
 answer = float('inf')
 for hospitals in combinations(hospital, m):
-    dist = 0
-    for h in hospitals:
-        for p in person:
-            dist += abs(h[0]-p[0]) + abs(h[1]-p[1])
-    answer = min(answer, dist)
+    total_dist = 0
+    for p in person:
+        min_dist = float('inf')
+        for h in hospitals:
+            tmp = abs(h[0]-p[0]) + abs(h[1]-p[1])
+            min_dist = min(min_dist, tmp)
+        total_dist += min_dist
+    answer = min(answer, total_dist)
 
 print(answer)
